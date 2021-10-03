@@ -1,0 +1,18 @@
+ls
+ls -l
+history
+history 1
+cd ~
+pwd
+cd ..
+cd `
+cd -
+history
+history
+make
+echo hi
+
+repeat 3 echo hi
+
+history
+
