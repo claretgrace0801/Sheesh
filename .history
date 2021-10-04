@@ -1,6 +1,4 @@
 history
-echo hi
-echo hi
 history
 history
 history
@@ -17,5 +15,7 @@ history
 history
 history
 history
-echo hi
+history
+history
+vim
 

@@ -21,13 +21,12 @@ void separate_symbols(char *s, char ***arr)
       {
         // >> case
         strcpy(temp, ">>");
-        i += 2;
+        i++;
       }
       else
       {
         // | < > case
         sprintf(temp, "%c", s[i]);
-        i++;
       }
 
       add_to_array(arr, temp);
@@ -35,7 +34,8 @@ void separate_symbols(char *s, char ***arr)
     }
     else
     {
-      sprintf(temp, "%s%c", temp, s[i]);
+
+      append_char(&temp, s[i]);
     }
   }
 
@@ -96,6 +96,16 @@ char ***parse_commands(char *str, int *no_of_commands)
       }
 
       ptr = strtok(NULL, delim);
+
+      for (int i = 0; 1; i++)
+      {
+        if (separated_commands[i] == NULL)
+        {
+          break;
+        }
+        free(separated_commands[i]);
+      }
+      free(separated_commands);
     }
   }
 

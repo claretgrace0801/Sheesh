@@ -235,3 +235,11 @@ void parse_path(char *path, char **new_path)
     sprintf(*new_path, "%s/%s", cust_cwd(0), path);
   }
 }
+
+void append_char(char **s, char c)
+{
+  int n = strlen(*s);
+  *s = realloc(*s, n + 2);
+  (*s)[n] = c;
+  (*s)[n + 1] = '\0';
+}

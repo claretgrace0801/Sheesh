@@ -66,8 +66,9 @@ char **convert_to_array(char *str);
 void get_process_name(int pid, char **proc_name);
 void add_to_array(char ***arr, char *s);
 void print_array(char **arr);
-void run_fg_job(char **args);
+void run_job(char **args, int is_bg);
 void parse_path(char *path, char **new_path);
 void replace_built_in(char **args, int *isFn);
+void append_char(char **s, char c);
 
 #endif

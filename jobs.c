@@ -27,8 +27,13 @@ void exit_bg_proc()
   }
 }
 
-void run_fg_job(char **args)
+void run_job(char **args, int is_bg)
 {
+  if (is_bg)
+  {
+    signal(SIGCHLD, exit_bg_proc);
+  }
+
   int pid = fork();
 
   if (pid == -1)
@@ -40,6 +45,12 @@ void run_fg_job(char **args)
   if (pid == 0)
   {
     // child
+    if (is_bg)
+    {
+      int current_pid = getpid();
+      printf("%d\n", current_pid);
+    }
+
     if (execvp(args[0], args) == -1)
     {
       perror("Exec Error");
@@ -49,30 +60,9 @@ void run_fg_job(char **args)
   else
   {
     // parent
-    wait(NULL);
-  }
-}
-
-void run_bg_job(char **args)
-{
-  signal(SIGCHLD, exit_bg_proc);
-  int pid = fork();
-
-  if (pid == -1)
-  {
-    perror("Process Creation Error");
-    return;
-  }
-
-  if (pid == 0)
-  {
-    // child
-    int current_pid = getpid();
-    printf("%d\n", current_pid);
-    if (execvp(args[0], args) == -1)
+    if (!is_bg)
     {
-      perror("Exec Error");
-      return;
+      wait(NULL);
     }
   }
 }
@@ -134,15 +124,15 @@ void run_job_queue(char ***queue, int no_of_jobs)
         continue;
       }
 
+      int is_bg = 0;
+
       if (strcmp(queue[job][l - 1], "&") == 0)
       {
         queue[job][l - 1] = NULL;
-        run_bg_job(queue[job]);
+        is_bg = 1;
       }
-      else
-      {
-        run_fg_job(queue[job]);
-      }
+
+      run_job(queue[job], is_bg);
     }
   }
   free_queue(&queue, no_of_jobs);

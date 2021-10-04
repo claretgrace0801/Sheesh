@@ -17,6 +17,6 @@ void repeat(char **args)
     int isFn = 0;
     replace_built_in(args + 2, &isFn);
     if (!isFn)
-      run_fg_job(args + 2);
+      run_job(args + 2, 0);
   }
 }
