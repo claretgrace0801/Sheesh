@@ -9,8 +9,7 @@ int main(int argc, char **argv)
 
   // needed to get input
   char *inp = (char *)malloc(sizeof(char) * 1000);
-  ssize_t *n = (ssize_t *)malloc(sizeof(ssize_t));
-  *n = 1000;
+  size_t n = 1000;
 
   // needed to parse input
   char ***jobs;
@@ -22,7 +21,7 @@ int main(int argc, char **argv)
     display_user();
 
     // take input
-    if (getline(&inp, n, stdin) == -1)
+    if (getline(&inp, &n, stdin) == -1)
     {
       printf("\n");
       return 0;
@@ -40,4 +39,6 @@ int main(int argc, char **argv)
     }
     write_to_history();
   }
+
+  UNUSED(argc);
 }

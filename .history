@@ -1,21 +1,21 @@
-ls
-ls -l
-history
-history 1
-cd ~
-pwd
-cd ..
-cd `
-cd -
-history
-history
-make
-echo hi
-repeat 3 echo hi
-history
 history
 echo hi
 echo hi
-
 history
+history
+history
+history
+history
+history
+history
+history
+history
+history
+history
+history
+history
+history
+history
+history
+echo hi
 

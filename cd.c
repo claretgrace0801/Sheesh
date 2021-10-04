@@ -21,8 +21,8 @@ char *cust_cwd(int shorten)
 
   if (check_prefix(helper_buf, shell_home))
   {
-    int l = strlen(shell_home);
-    int n = strlen(helper_buf);
+    // int l = strlen(shell_home);
+    // int n = strlen(helper_buf);
     char *new_path = malloc(strlen(helper_buf));
     strcpy(new_path, "~");
     strcat(new_path, helper_buf + strlen(shell_home));

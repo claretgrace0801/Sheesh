@@ -1,5 +1,6 @@
 #ifndef HEADER
 #define HEADER
+#define UNUSED(x) (void)(x)
 
 #include <stdio.h>
 #include <unistd.h>
