@@ -11,8 +11,11 @@ history
 history
 make
 echo hi
-
 repeat 3 echo hi
+history
+history
+echo hi
+echo hi
 
 history
 
