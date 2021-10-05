@@ -2,7 +2,7 @@
 
 void parse_redirection(char ***q, int n_q, struct ints *inputs, struct ints *outputs)
 {
-  mode_t new_file_mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH;
+  mode_t new_file_mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
 
   for (int com = 0; com < n_q; com++)
   {
