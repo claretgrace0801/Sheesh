@@ -163,16 +163,6 @@ void run_job_queue(char ***queue, int no_of_jobs)
 
     parse_redirection(new_queue, n_new_jobs, &inputs, &outputs);
 
-    // for (int i = 0; i < inputs.sz; i++)
-    // {
-    //   fprintf(stderr, "inp %d: %d\n", i, inputs.arr[i]);
-    // }
-
-    // for (int i = 0; i < outputs.sz; i++)
-    // {
-    //   fprintf(stderr, "out %d: %d\n", i, outputs.arr[i]);
-    // }
-
     // save IO
 
     for (int new_job = 0; new_job < n_new_jobs; new_job++)
@@ -205,6 +195,14 @@ void run_job_queue(char ***queue, int no_of_jobs)
       // restore IO
       dup2(fd_in, 0);
       dup2(fd_out, 1);
+    }
+
+    for (int j = 0; j < inputs.sz; j++)
+    {
+      if (inputs.arr[j] != 0)
+      {
+        close(inputs.arr[j]);
+      }
     }
 
     // free stuff
