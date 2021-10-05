@@ -17,5 +17,5 @@ history
 history
 history
 history
-echo hi | grep h
+cat lol.txt
 

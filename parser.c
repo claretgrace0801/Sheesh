@@ -1,5 +1,89 @@
 #include "header.h"
 
+void parse_redirection(char ***q, int n_q, struct ints *inputs, struct ints *outputs)
+{
+  mode_t new_file_mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH;
+
+  for (int com = 0; com < n_q; com++)
+  {
+    int l = arg_len(q[com]);
+    for (int w = 0; w < l; w++)
+    {
+      if (strcmp(q[com][w], ">") == 0)
+      {
+        char *path = malloc(1);
+        parse_path(q[com][w + 1], &path);
+
+        int fd = open(path, O_CREAT | O_TRUNC | O_WRONLY, new_file_mode);
+        if (fd < 0)
+        {
+          perror("Redirection Error");
+          return;
+        }
+
+        free(q[com][w + 1]);
+
+        free(q[com][w]);
+        q[com][w] = NULL;
+
+        if (outputs->arr[com] != 0 && outputs->arr[com] != 1)
+        {
+          close(outputs->arr[com]);
+        }
+        outputs->arr[com] = fd;
+
+        free(path);
+      }
+      else if (strcmp(q[com][w], ">>") == 0)
+      {
+        char *path = malloc(1);
+        parse_path(q[com][w + 1], &path);
+
+        int fd = open(path, O_CREAT | O_APPEND | O_WRONLY, new_file_mode);
+        if (fd < 0)
+        {
+          perror("Redirection Error");
+          return;
+        }
+
+        if (outputs->arr[com] != 0 && outputs->arr[com] != 1)
+        {
+          close(outputs->arr[com]);
+        }
+        outputs->arr[com] = fd;
+
+        free(q[com][w + 1]);
+
+        free(q[com][w]);
+        q[com][w] = NULL;
+
+        free(path);
+      }
+      else if (strcmp(q[com][w], "<") == 0)
+      {
+        char *path = malloc(1);
+        parse_path(q[com][w + 1], &path);
+
+        int fd = open(path, O_RDONLY);
+        if (fd < 0)
+        {
+          perror("Redirection Error");
+          return;
+        }
+
+        inputs->arr[com] = fd;
+
+        free(q[com][w + 1]);
+
+        free(q[com][w]);
+        q[com][w] = NULL;
+
+        free(path);
+      }
+    }
+  }
+}
+
 int parse_pipes(char ***commands, char ****queue, struct ints *inputs, struct ints *outputs)
 {
   (*queue) = malloc(sizeof(char **));

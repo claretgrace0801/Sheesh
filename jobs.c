@@ -83,7 +83,6 @@ void run_job(char **args, int is_bg, struct ints inputs, struct ints outputs, in
     {
       wait(NULL);
     }
-    close(inputs.arr[ind]);
     close(outputs.arr[ind]);
   }
 }
@@ -137,7 +136,6 @@ void replace_built_in(char **args, int *isFn, struct ints inputs, struct ints ou
 
   if (is_built_in)
   {
-    close(inputs.arr[ind]);
     close(outputs.arr[ind]);
 
     dup2(fd_in, 0);
@@ -158,29 +156,31 @@ void run_job_queue(char ***queue, int no_of_jobs)
     struct ints inputs, outputs;
 
     int n_new_jobs = parse_pipes(&(queue[job]), &new_queue, &inputs, &outputs);
-
     if (n_new_jobs == 0)
     {
       break;
     }
 
+    parse_redirection(new_queue, n_new_jobs, &inputs, &outputs);
+
     // for (int i = 0; i < inputs.sz; i++)
     // {
-    //   printf("inp %d: %d\n", i, inputs.arr[i]);
+    //   fprintf(stderr, "inp %d: %d\n", i, inputs.arr[i]);
     // }
 
     // for (int i = 0; i < outputs.sz; i++)
     // {
-    //   printf("out %d: %d\n", i, outputs.arr[i]);
+    //   fprintf(stderr, "out %d: %d\n", i, outputs.arr[i]);
     // }
 
     // save IO
-    int fd_in, fd_out;
-    fd_in = dup(0);
-    fd_out = dup(1);
 
     for (int new_job = 0; new_job < n_new_jobs; new_job++)
     {
+      int fd_in, fd_out;
+      fd_in = dup(0);
+      fd_out = dup(1);
+
       int isFn = 0;
       if (new_queue[new_job][0] != NULL)
       {
@@ -202,11 +202,10 @@ void run_job_queue(char ***queue, int no_of_jobs)
 
         run_job(new_queue[new_job], is_bg, inputs, outputs, new_job);
       }
+      // restore IO
+      dup2(fd_in, 0);
+      dup2(fd_out, 1);
     }
-
-    // restore IO
-    dup2(fd_in, 0);
-    dup2(fd_out, 1);
 
     // free stuff
     free_queue(&new_queue, n_new_jobs);

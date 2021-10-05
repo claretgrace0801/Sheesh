@@ -42,6 +42,7 @@ void display_user();
 
 char ***parse_commands(char *str, int *no_of_commands);
 int parse_pipes(char ***commands, char ****queue, struct ints *inputs, struct ints *outputs);
+void parse_redirection(char ***q, int n_q, struct ints *inputs, struct ints *outputs);
 
 // running jobs
 
