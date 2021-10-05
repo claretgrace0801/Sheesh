@@ -2,6 +2,13 @@
 
 char helper_buf[1000];
 
+void add_to_int_arr(struct ints *arr, int n)
+{
+  arr->arr = realloc(arr->arr, (arr->sz + 1) * sizeof(int));
+  arr->arr[arr->sz] = n;
+  arr->sz = arr->sz + 1;
+}
+
 void get_path(char *file)
 {
   int l = strlen(file);

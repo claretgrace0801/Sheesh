@@ -1,5 +1,20 @@
 #include "header.h"
 
+int check_built_in(char **args)
+{
+  if (strcmp(args[0], "echo") == 0 ||
+      strcmp(args[0], "cd") == 0 ||
+      strcmp(args[0], "pwd") == 0 ||
+      strcmp(args[0], "pinfo") == 0 ||
+      strcmp(args[0], "ls") == 0 ||
+      strcmp(args[0], "repeat") == 0 ||
+      strcmp(args[0], "history") == 0)
+  {
+    return 1;
+  }
+  return 0;
+}
+
 void exit_bg_proc()
 {
 
@@ -27,7 +42,7 @@ void exit_bg_proc()
   }
 }
 
-void run_job(char **args, int is_bg)
+void run_job(char **args, int is_bg, struct ints inputs, struct ints outputs, int ind)
 {
   if (is_bg)
   {
@@ -44,6 +59,10 @@ void run_job(char **args, int is_bg)
 
   if (pid == 0)
   {
+    // changing IO
+    dup2(inputs.arr[ind], 0);
+    dup2(outputs.arr[ind], 1);
+
     // child
     if (is_bg)
     {
@@ -64,48 +83,65 @@ void run_job(char **args, int is_bg)
     {
       wait(NULL);
     }
+    close(inputs.arr[ind]);
+    close(outputs.arr[ind]);
   }
 }
 
-void replace_built_in(char **args, int *isFn)
+void replace_built_in(char **args, int *isFn, struct ints inputs, struct ints outputs, int ind)
 {
-  int command_size = strlen(shell_home) + 30;
-  args[0] = realloc(args[0], command_size);
+
+  int is_built_in = check_built_in(args);
+
+  int fd_in, fd_out;
+
+  if (is_built_in)
+  {
+    *isFn = 1;
+    // replace IO
+    fd_in = dup(0);
+    fd_out = dup(1);
+
+    dup2(inputs.arr[ind], 0);
+    dup2(outputs.arr[ind], 1);
+  }
 
   if (strcmp(args[0], "echo") == 0)
   {
-    *isFn = 1;
     echo(args);
   }
   else if (strcmp(args[0], "cd") == 0)
   {
-    *isFn = 1;
     cd(args);
   }
   else if (strcmp(args[0], "pwd") == 0)
   {
-    *isFn = 1;
     pwd();
   }
   else if (strcmp(args[0], "pinfo") == 0)
   {
-    *isFn = 1;
     pinfo(args);
   }
   else if (strcmp(args[0], "ls") == 0)
   {
-    *isFn = 1;
     ls(args);
   }
   else if (strcmp(args[0], "repeat") == 0)
   {
-    *isFn = 1;
     repeat(args);
   }
   else if (strcmp(args[0], "history") == 0)
   {
-    *isFn = 1;
     call_history(args);
+  }
+
+  if (is_built_in)
+  {
+    close(inputs.arr[ind]);
+    close(outputs.arr[ind]);
+
+    dup2(fd_in, 0);
+    dup2(fd_out, 1);
   }
 }
 
@@ -113,27 +149,69 @@ void run_job_queue(char ***queue, int no_of_jobs)
 {
   for (int job = 0; job < no_of_jobs; job++)
   {
-    int isFn = 0;
-    if (queue[job][0] != NULL)
+    if (queue[job][0] == NULL)
     {
-      replace_built_in(queue[job], &isFn);
-      int l = arg_len(queue[job]);
-
-      if (isFn)
-      {
-        continue;
-      }
-
-      int is_bg = 0;
-
-      if (strcmp(queue[job][l - 1], "&") == 0)
-      {
-        queue[job][l - 1] = NULL;
-        is_bg = 1;
-      }
-
-      run_job(queue[job], is_bg);
+      continue;
     }
+
+    char ***new_queue;
+    struct ints inputs, outputs;
+
+    int n_new_jobs = parse_pipes(&(queue[job]), &new_queue, &inputs, &outputs);
+
+    if (n_new_jobs == 0)
+    {
+      break;
+    }
+
+    // for (int i = 0; i < inputs.sz; i++)
+    // {
+    //   printf("inp %d: %d\n", i, inputs.arr[i]);
+    // }
+
+    // for (int i = 0; i < outputs.sz; i++)
+    // {
+    //   printf("out %d: %d\n", i, outputs.arr[i]);
+    // }
+
+    // save IO
+    int fd_in, fd_out;
+    fd_in = dup(0);
+    fd_out = dup(1);
+
+    for (int new_job = 0; new_job < n_new_jobs; new_job++)
+    {
+      int isFn = 0;
+      if (new_queue[new_job][0] != NULL)
+      {
+        replace_built_in(new_queue[new_job], &isFn, inputs, outputs, new_job);
+        int l = arg_len(new_queue[new_job]);
+
+        if (isFn)
+        {
+          continue;
+        }
+
+        int is_bg = 0;
+
+        if (strcmp(new_queue[new_job][l - 1], "&") == 0)
+        {
+          new_queue[new_job][l - 1] = NULL;
+          is_bg = 1;
+        }
+
+        run_job(new_queue[new_job], is_bg, inputs, outputs, new_job);
+      }
+    }
+
+    // restore IO
+    dup2(fd_in, 0);
+    dup2(fd_out, 1);
+
+    // free stuff
+    free_queue(&new_queue, n_new_jobs);
+    free(inputs.arr);
+    free(outputs.arr);
   }
   free_queue(&queue, no_of_jobs);
 }

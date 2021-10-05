@@ -16,6 +16,14 @@
 #include <grp.h>
 #include <time.h>
 
+// structs
+
+struct ints
+{
+  int *arr;
+  int sz;
+};
+
 // test
 void test();
 
@@ -33,6 +41,7 @@ void display_user();
 // parsers
 
 char ***parse_commands(char *str, int *no_of_commands);
+int parse_pipes(char ***commands, char ****queue, struct ints *inputs, struct ints *outputs);
 
 // running jobs
 
@@ -56,6 +65,7 @@ void add_to_history(char *command);
 // helper functions
 
 void initialisation(char *shell);
+void add_to_int_arr(struct ints *arr, int n);
 char *cust_cwd(int shorten);
 void parse_string(char **str);
 int check_prefix(char *str, char *pre);
@@ -66,9 +76,9 @@ char **convert_to_array(char *str);
 void get_process_name(int pid, char **proc_name);
 void add_to_array(char ***arr, char *s);
 void print_array(char **arr);
-void run_job(char **args, int is_bg);
+void run_job(char **args, int is_bg, struct ints inputs, struct ints outputs, int ind);
 void parse_path(char *path, char **new_path);
-void replace_built_in(char **args, int *isFn);
+void replace_built_in(char **args, int *isFn, struct ints inputs, struct ints outputs, int ind);
 void append_char(char **s, char c);
 
 #endif

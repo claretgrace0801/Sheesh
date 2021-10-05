@@ -1,5 +1,65 @@
 #include "header.h"
 
+int parse_pipes(char ***commands, char ****queue, struct ints *inputs, struct ints *outputs)
+{
+  (*queue) = malloc(sizeof(char **));
+  (*queue)[0] = malloc(sizeof(char *));
+  (*queue)[0][0] = NULL;
+
+  int command_ind = 0;
+
+  // commands -> [NULL]
+  for (int w = 0; 1; w++)
+  {
+    if ((*commands)[w] == NULL)
+    {
+      break;
+    }
+
+    if (strcmp((*commands)[w], "|") == 0)
+    {
+      int n = arg_len((*queue)[command_ind]);
+      if (n > 0)
+      {
+        (*queue) = realloc((*queue), (command_ind + 2) * sizeof(char *));
+        (*queue)[command_ind + 1] = malloc(sizeof(char *));
+        (*queue)[command_ind + 1][0] = NULL;
+        command_ind++;
+      }
+    }
+    else
+    {
+      add_to_array(&((*queue)[command_ind]), (*commands)[w]);
+    }
+  }
+
+  // making pipes
+
+  int p[2];
+  inputs->arr = malloc(sizeof(int));
+  inputs->sz = 0;
+
+  outputs->arr = malloc(sizeof(int));
+  outputs->sz = 0;
+
+  add_to_int_arr(inputs, 0);
+
+  for (int i = 0; i < command_ind; i++)
+  {
+    if (pipe(p) < 0)
+    {
+      perror("Pipe Error");
+      return 0;
+    }
+    add_to_int_arr(inputs, p[0]);
+    add_to_int_arr(outputs, p[1]);
+  }
+
+  add_to_int_arr(outputs, 1);
+
+  return (command_ind + 1);
+}
+
 void separate_symbols(char *s, char ***arr)
 {
   char *temp = malloc(strlen(s) + 10);
