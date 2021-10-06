@@ -44,10 +44,10 @@ void exit_bg_proc()
 
 void run_job(char **args, int is_bg, struct ints inputs, struct ints outputs, int ind)
 {
-  if (is_bg)
-  {
-    signal(SIGCHLD, exit_bg_proc);
-  }
+  // if (is_bg)
+  // {
+  //   signal(SIGCHLD, exit_bg_proc);
+  // }
 
   int pid = fork();
 
@@ -68,6 +68,12 @@ void run_job(char **args, int is_bg, struct ints inputs, struct ints outputs, in
     {
       int current_pid = getpid();
       printf("%d\n", current_pid);
+
+      if (setpgid(0, 0) == -1)
+      {
+        perror("setpgid:");
+        exit(1);
+      }
     }
 
     if (execvp(args[0], args) == -1)
@@ -81,7 +87,8 @@ void run_job(char **args, int is_bg, struct ints inputs, struct ints outputs, in
     // parent
     if (!is_bg)
     {
-      wait(NULL);
+      int wstatus;
+      waitpid(pid, &wstatus, WUNTRACED);
     }
     close(outputs.arr[ind]);
   }

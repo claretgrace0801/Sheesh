@@ -46,6 +46,10 @@ void initialisation(char *shell)
   sprintf(history_file, "%s/.history", shell_home);
 
   read_from_history();
+
+  // initialising bg processes
+  proc_no = 0;
+  n_bg_procs = 0;
 }
 
 int check_prefix(char *str, char *pre)

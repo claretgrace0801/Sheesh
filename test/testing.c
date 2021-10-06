@@ -14,7 +14,7 @@
 
 int main()
 {
-  printf("stared\n");
+  printf("started\n");
 
   pid_t pid = fork();
 
@@ -27,8 +27,8 @@ int main()
   {
     while (1)
     {
-      sleep(1);
-      printf("id: %d, kill: %d\n", pid, kill(pid, 0));
+      sleep(0.3);
+      printf("%d\n", kill(pid, SIGCONT));
     }
   }
 }

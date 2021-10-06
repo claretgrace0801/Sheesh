@@ -24,6 +24,14 @@ struct ints
   int sz;
 };
 
+struct Process
+{
+  int proc_no;
+  pid_t pid;
+  char *name;
+  int state;
+};
+
 // test
 void test();
 
@@ -33,6 +41,9 @@ char shell_home[1000];
 int shell_pid;
 char **history;
 char *history_file;
+struct Process bg_procs[500];
+int n_bg_procs;
+int proc_no;
 
 // user functions
 
