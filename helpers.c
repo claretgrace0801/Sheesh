@@ -2,6 +2,39 @@
 
 char helper_buf[1000];
 
+int get_proc_by_pid(pid_t pid)
+{
+  for (int i = 0; i < n_bg_procs; i++)
+  {
+    if (bg_procs[i].pid == pid)
+    {
+      return i;
+    }
+  }
+  return -1;
+}
+
+int get_proc_status(pid_t pid)
+{
+
+  int status;
+
+  char **parsed_stats;
+  get_stats(pid, &parsed_stats);
+
+  if (parsed_stats[2][0] == 'T')
+  {
+    status = 0;
+  }
+  else
+  {
+    status = 1;
+  }
+
+  free_array(&parsed_stats);
+  return status;
+}
+
 void add_to_int_arr(struct ints *arr, int n)
 {
   arr->arr = realloc(arr->arr, (arr->sz + 1) * sizeof(int));

@@ -1,5 +1,19 @@
 #include "header.h"
 
+int cmp_proc(const void *a, const void *b)
+{
+  int res = strcmp(((struct Process *)a)->name, ((struct Process *)b)->name);
+
+  if (res != 0)
+  {
+    return res;
+  }
+  else
+  {
+    return ((struct Process *)a)->proc_no - ((struct Process *)b)->proc_no;
+  }
+}
+
 void add_to_bg(pid_t pid, int status, char *name)
 {
   proc_no++;
@@ -15,39 +29,6 @@ void add_to_bg(pid_t pid, int status, char *name)
 
   bg_procs[n_bg_procs] = proc;
   n_bg_procs++;
-}
-
-int get_proc_by_pid(pid_t pid)
-{
-  for (int i = 0; i < n_bg_procs; i++)
-  {
-    if (bg_procs[i].pid == pid)
-    {
-      return i;
-    }
-  }
-  return -1;
-}
-
-int get_proc_status(pid_t pid)
-{
-
-  int status;
-
-  char **parsed_stats;
-  get_stats(pid, &parsed_stats);
-
-  if (parsed_stats[2][0] == 'T')
-  {
-    status = 0;
-  }
-  else
-  {
-    status = 1;
-  }
-
-  free_array(&parsed_stats);
-  return status;
 }
 
 void update_bg_proc()
@@ -98,6 +79,6 @@ void print_jobs(struct Process *procs, int n_procs)
 
 void jobs()
 {
-
+  qsort((void *)bg_procs, n_bg_procs, sizeof(struct Process), cmp_proc);
   print_jobs(bg_procs, n_bg_procs);
 }
