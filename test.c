@@ -2,18 +2,14 @@
 
 void test()
 {
-  struct ints arr;
-  arr.arr = malloc(sizeof(int));
-  arr.sz = 0;
+  int wstatus = 127;
 
-  add_to_int_arr(&arr, 1);
-  add_to_int_arr(&arr, 1);
-  add_to_int_arr(&arr, 1);
-  add_to_int_arr(&arr, 1);
-  add_to_int_arr(&arr, 1);
-
-  for (int i = 0; i < arr.sz; i++)
-  {
-    printf("%d\n", arr.arr[i]);
-  }
+  // printf("%d\n", WIFEXITED(wstatus));
+  // printf("%d\n", WIFSIGNALED(wstatus));
+  printf("%d\n", WIFSTOPPED(wstatus));
+  // printf("%d\n", WEXITSTATUS(wstatus));
+  // printf("%d\n", WTERMSIG(wstatus));
+  // printf("%d\n", WCOREDUMP(wstatus));
+  // printf("%d\n", WSTOPSIG(wstatus));
+  // printf("%d\n", WIFCONTINUED(wstatus));
 }

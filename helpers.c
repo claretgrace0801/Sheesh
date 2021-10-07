@@ -24,6 +24,8 @@ void get_path(char *file)
 
 void initialisation(char *shell)
 {
+  signal_detection();
+
   shell_pid = getpid();
   get_path(shell);
   char *args[3] = {"cd", shell, NULL};
@@ -33,7 +35,6 @@ void initialisation(char *shell)
     perror("Initialisation Error");
     return;
   }
-  isFine = 1;
 
   history = malloc(30 * sizeof(char *));
 
@@ -98,6 +99,16 @@ void parse_string(char **str)
   strcpy(*str, new_str);
   free(new_str);
   return;
+}
+
+void free_array(char ***args)
+{
+  int l = arg_len(*args);
+  for (int i = 0; i < l; i++)
+  {
+    free((*args)[i]);
+  }
+  free(*args);
 }
 
 int arg_len(char **args)

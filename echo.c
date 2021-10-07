@@ -1,25 +1,29 @@
 #include "header.h"
 
-void echo(char **argv)
+void arr_to_string(char **argv, char **s)
 {
-  int words = arg_len(argv) - 1;
+  int words = arg_len(argv);
 
   int total_len = 0;
-  for (int i = 1; i <= words; i++)
+  for (int i = 0; i < words; i++)
   {
     total_len += (1 + strlen(argv[i]));
   }
 
-  char *s = malloc(total_len);
-  strcpy(s, "");
+  *s = realloc(*s, total_len);
+  strcpy(*s, "");
 
-  for (int i = 1; i <= words; i++)
+  for (int i = 0; i < words; i++)
   {
-    strcat(s, argv[i]);
-    strcat(s, " ");
+    strcat(*s, argv[i]);
+    strcat(*s, " ");
   }
+}
 
-  parse_string(&s);
+void echo(char **argv)
+{
+  char *s = malloc(1);
+  arr_to_string(argv + 1, &s);
 
   printf("%s\n", s);
   free(s);

@@ -8,7 +8,9 @@ int check_built_in(char **args)
       strcmp(args[0], "pinfo") == 0 ||
       strcmp(args[0], "ls") == 0 ||
       strcmp(args[0], "repeat") == 0 ||
-      strcmp(args[0], "history") == 0)
+      strcmp(args[0], "history") == 0 ||
+      strcmp(args[0], "jobs") == 0 ||
+      strcmp(args[0], "sig") == 0)
   {
     return 1;
   }
@@ -17,7 +19,6 @@ int check_built_in(char **args)
 
 void exit_bg_proc()
 {
-
   int pid;
   int status;
 
@@ -32,11 +33,11 @@ void exit_bg_proc()
     return;
   }
 
-  if (!status)
+  if (WIFEXITED(status) & !WIFSTOPPED(status))
   {
     printf("\nProcess with pid %d ended normally\n", pid);
   }
-  else
+  else if (WIFSIGNALED(status))
   {
     printf("\nProcess with pid %d ended abnormally\n", pid);
   }
@@ -44,11 +45,6 @@ void exit_bg_proc()
 
 void run_job(char **args, int is_bg, struct ints inputs, struct ints outputs, int ind)
 {
-  // if (is_bg)
-  // {
-  //   signal(SIGCHLD, exit_bg_proc);
-  // }
-
   int pid = fork();
 
   if (pid == -1)
@@ -84,11 +80,19 @@ void run_job(char **args, int is_bg, struct ints inputs, struct ints outputs, in
   }
   else
   {
+
     // parent
     if (!is_bg)
     {
       int wstatus;
       waitpid(pid, &wstatus, WUNTRACED);
+    }
+    else
+    {
+      char *name = malloc(1);
+      arr_to_string(args, &name);
+      add_to_bg(pid, 1, name);
+      free(name);
     }
     close(outputs.arr[ind]);
   }
@@ -139,6 +143,14 @@ void replace_built_in(char **args, int *isFn, struct ints inputs, struct ints ou
   else if (strcmp(args[0], "history") == 0)
   {
     call_history(args);
+  }
+  else if (strcmp(args[0], "jobs") == 0)
+  {
+    jobs();
+  }
+  else if (strcmp(args[0], "sig") == 0)
+  {
+    sig(args);
   }
 
   if (is_built_in)

@@ -29,7 +29,7 @@ struct Process
   int proc_no;
   pid_t pid;
   char *name;
-  int state;
+  int status;
 };
 
 // test
@@ -59,6 +59,14 @@ void parse_redirection(char ***q, int n_q, struct ints *inputs, struct ints *out
 
 void run_job_queue(char ***queue, int no_of_jobs);
 
+// processes
+
+void get_proc_name(pid_t pid, char **name);
+int get_proc_status(pid_t pid);
+void add_to_bg(pid_t pid, int state, char *name);
+void jobs();
+void update_bg_proc();
+
 // implemented
 
 void cd(char **args);
@@ -74,15 +82,22 @@ void read_from_history();
 void write_to_history();
 void add_to_history(char *command);
 
+// signals
+void sig(char **args);
+void signal_detection();
+
 // helper functions
 
+void get_stats(pid_t pid, char ***parsed_stats);
 void initialisation(char *shell);
+void arr_to_string(char **argv, char **s);
+int get_proc_by_pid(pid_t pid);
 void add_to_int_arr(struct ints *arr, int n);
 char *cust_cwd(int shorten);
 void parse_string(char **str);
 int check_prefix(char *str, char *pre);
 int arg_len(char **args);
-int isFine;
+void free_array(char ***args);
 void free_queue(char ****q, int n);
 char **convert_to_array(char *str);
 void get_process_name(int pid, char **proc_name);

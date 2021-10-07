@@ -27,6 +27,8 @@ int main(int argc, char **argv)
       return 0;
     }
 
+    update_bg_proc();
+
     // parse input
     jobs = parse_commands(inp, &no_of_jobs);
 
