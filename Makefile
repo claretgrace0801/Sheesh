@@ -1,4 +1,4 @@
-all: shell clear run
+all: shell clear
 
 shell: compilation
 	gcc -g -o shell main.o helpers.o prompt.o parser.o execution.o test.o cd.o echo.o pinfo.o ls.o repeat.o history.o process.o signals.o

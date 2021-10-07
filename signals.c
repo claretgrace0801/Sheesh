@@ -2,9 +2,9 @@
 
 void sig(char **args)
 {
-  if (arg_len(args) < 3)
+  if (arg_len(args) < 3 || !is_num(args[1]) || !is_num(args[2]))
   {
-    printf("Error: Provide all arguments\n");
+    printf("Error: Provide Valid Arguments\n");
     return;
   }
 

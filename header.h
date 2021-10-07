@@ -15,6 +15,7 @@
 #include <pwd.h>
 #include <grp.h>
 #include <time.h>
+#include <ctype.h>
 
 // structs
 
@@ -64,8 +65,10 @@ void run_job_queue(char ***queue, int no_of_jobs);
 void get_proc_name(pid_t pid, char **name);
 int get_proc_status(pid_t pid);
 void add_to_bg(pid_t pid, int state, char *name);
-void jobs();
 void update_bg_proc();
+void jobs();
+void fg(char **args);
+void bg(char **args);
 
 // implemented
 
@@ -108,5 +111,6 @@ void run_job(char **args, int is_bg, struct ints inputs, struct ints outputs, in
 void parse_path(char *path, char **new_path);
 void replace_built_in(char **args, int *isFn, struct ints inputs, struct ints outputs, int ind);
 void append_char(char **s, char c);
+int is_num(char *s);
 
 #endif

@@ -82,3 +82,62 @@ void jobs()
   qsort((void *)bg_procs, n_bg_procs, sizeof(struct Process), cmp_proc);
   print_jobs(bg_procs, n_bg_procs);
 }
+
+void fg(char **args)
+{
+  if (arg_len(args) < 2 || !is_num(args[1]))
+  {
+    printf("Error: Argument Error\n");
+  }
+
+  int job_no = atoi(args[1]);
+
+  int proc_ind = find_proc_by_jobno(job_no);
+  if (proc_ind < 0)
+  {
+    printf("Error: Process with job no %d not found\n", job_no);
+  }
+
+  int pid = bg_procs[proc_ind].pid;
+
+  // change foreground to bg process
+
+  signal(SIGTTOU, SIG_IGN);
+
+  int terminal_gid = tcgetpgrp(0);
+  tcsetpgrp(0, pid);
+
+  if (kill(pid, SIGCONT) < 0)
+  {
+    perror("FG Error");
+  }
+
+  int wstatus;
+  waitpid(pid, &wstatus, WUNTRACED);
+
+  tcsetpgrp(0, terminal_gid);
+  signal(SIGTTOU, SIG_DFL);
+}
+
+void bg(char **args)
+{
+  if (arg_len(args) < 2 || !is_num(args[1]))
+  {
+    printf("Error: Argument Error\n");
+  }
+
+  int job_no = atoi(args[1]);
+
+  int proc_ind = find_proc_by_jobno(job_no);
+  if (proc_ind < 0)
+  {
+    printf("Error: Process with job no %d not found\n", job_no);
+  }
+
+  int pid = bg_procs[proc_ind].pid;
+
+  if (kill(pid, SIGCONT) < 0)
+  {
+    perror("BG Error");
+  }
+}

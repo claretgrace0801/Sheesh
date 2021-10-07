@@ -10,7 +10,9 @@ int check_built_in(char **args)
       strcmp(args[0], "repeat") == 0 ||
       strcmp(args[0], "history") == 0 ||
       strcmp(args[0], "jobs") == 0 ||
-      strcmp(args[0], "sig") == 0)
+      strcmp(args[0], "sig") == 0 ||
+      strcmp(args[0], "fg") == 0 ||
+      strcmp(args[0], "bg") == 0)
   {
     return 1;
   }
@@ -151,6 +153,14 @@ void replace_built_in(char **args, int *isFn, struct ints inputs, struct ints ou
   else if (strcmp(args[0], "sig") == 0)
   {
     sig(args);
+  }
+  else if (strcmp(args[0], "fg") == 0)
+  {
+    fg(args);
+  }
+  else if (strcmp(args[0], "bg") == 0)
+  {
+    bg(args);
   }
 
   if (is_built_in)

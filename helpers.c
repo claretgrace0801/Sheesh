@@ -2,6 +2,25 @@
 
 char helper_buf[1000];
 
+int is_num(char *s)
+{
+  int l = strlen(s);
+  if (l == 0)
+  {
+    return 0;
+  }
+
+  for (int i = 0; i < l; i++)
+  {
+    if (isdigit(s[i]))
+    {
+      continue;
+    }
+    return 0;
+  }
+  return 1;
+}
+
 int get_proc_by_pid(pid_t pid)
 {
   for (int i = 0; i < n_bg_procs; i++)
