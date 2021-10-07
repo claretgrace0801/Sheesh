@@ -96,6 +96,7 @@ void add_to_int_arr(struct ints *arr, int n);
 char *cust_cwd(int shorten);
 void parse_string(char **str);
 int check_prefix(char *str, char *pre);
+int find_proc_by_jobno(int job_no);
 int arg_len(char **args);
 void free_array(char ***args);
 void free_queue(char ****q, int n);

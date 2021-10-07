@@ -11,25 +11,15 @@ void sig(char **args)
   int job_no = atoi(args[1]);
   int sig = atoi(args[2]);
 
-  struct Process proc;
-  int found_proc = 0;
+  int proc_ind = find_proc_by_jobno(job_no);
 
-  for (int i = 0; i < n_bg_procs; i++)
-  {
-    if (bg_procs[i].proc_no == job_no)
-    {
-      proc = bg_procs[i];
-      found_proc = 1;
-    }
-  }
-
-  if (!found_proc)
+  if (proc_ind < 0)
   {
     printf("Error: Process with job number %d not found\n", job_no);
     return;
   }
 
-  if (kill(proc.pid, sig) < 0)
+  if (kill(bg_procs[proc_ind].pid, sig) < 0)
   {
     perror("Signal Error");
   }

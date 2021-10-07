@@ -14,6 +14,18 @@ int get_proc_by_pid(pid_t pid)
   return -1;
 }
 
+int find_proc_by_jobno(int job_no)
+{
+  for (int i = 0; i < n_bg_procs; i++)
+  {
+    if (bg_procs[i].proc_no == job_no)
+    {
+      return i;
+    }
+  }
+  return -1;
+}
+
 int get_proc_status(pid_t pid)
 {
 
