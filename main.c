@@ -19,6 +19,7 @@ int main(int argc, char **argv)
   {
     // displays username, hostname
     display_user();
+    fflush(stdout);
 
     // take input
     if (getline(&inp, &n, stdin) == -1)
@@ -26,6 +27,15 @@ int main(int argc, char **argv)
       printf("\n");
       return 0;
     }
+    // // take input
+    // int read_bytes;
+    // if ((read_bytes = read(0, inp, n)) == 0)
+    // {
+    //   printf("\n");
+    //   exit(0);
+    // }
+
+    // inp[read_bytes] = '\0';
 
     update_bg_proc();
 
@@ -40,6 +50,7 @@ int main(int argc, char **argv)
       add_to_history(inp);
     }
     write_to_history();
+    fflush(stdout);
   }
 
   UNUSED(argc);

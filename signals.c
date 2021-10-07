@@ -47,8 +47,32 @@ void bg_exit_handler()
   }
 }
 
+void stop_process_handler()
+{
+  int cur_pid = getpid();
+  if (cur_pid != shell_pid)
+  {
+    if (kill(cur_pid, SIGKILL) < 0)
+    {
+      perror("Kill Error");
+    }
+  }
+}
+
+void push_to_bg_handler()
+{
+  // fprintf(stderr, "pushing to bg\n");
+  int cur_pid = getpid();
+  if (cur_pid != shell_pid)
+  {
+    kill(cur_pid, SIGSTOP);
+    exit(0);
+  }
+}
+
 void signal_detection()
 {
-
   signal(SIGCHLD, bg_exit_handler);
+  signal(SIGINT, stop_process_handler);
+  signal(SIGTSTP, push_to_bg_handler);
 }

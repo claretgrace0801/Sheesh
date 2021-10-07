@@ -2,7 +2,9 @@
 
 int check_built_in(char **args)
 {
-  if (strcmp(args[0], "echo") == 0 ||
+  if (
+      strcmp(args[0], "exit") == 0 ||
+      strcmp(args[0], "echo") == 0 ||
       strcmp(args[0], "cd") == 0 ||
       strcmp(args[0], "pwd") == 0 ||
       strcmp(args[0], "pinfo") == 0 ||
@@ -35,13 +37,17 @@ void exit_bg_proc()
     return;
   }
 
-  if (WIFEXITED(status) & !WIFSTOPPED(status))
+  if (WIFEXITED(status))
   {
     printf("\nProcess with pid %d ended normally\n", pid);
   }
   else if (WIFSIGNALED(status))
   {
     printf("\nProcess with pid %d ended abnormally\n", pid);
+  }
+  else if (WIFSTOPPED(status))
+  {
+    printf("\nProcess with pid %d stopped\n", pid);
   }
 }
 
@@ -82,19 +88,17 @@ void run_job(char **args, int is_bg, struct ints inputs, struct ints outputs, in
   }
   else
   {
-
     // parent
+
+    char *name = malloc(1);
+    arr_to_string(args, &name);
+    add_to_bg(pid, 1, name);
+    free(name);
+
     if (!is_bg)
     {
       int wstatus;
       waitpid(pid, &wstatus, WUNTRACED);
-    }
-    else
-    {
-      char *name = malloc(1);
-      arr_to_string(args, &name);
-      add_to_bg(pid, 1, name);
-      free(name);
     }
     close(outputs.arr[ind]);
   }
@@ -118,7 +122,11 @@ void replace_built_in(char **args, int *isFn, struct ints inputs, struct ints ou
     dup2(outputs.arr[ind], 1);
   }
 
-  if (strcmp(args[0], "echo") == 0)
+  if (strcmp(args[0], "exit") == 0)
+  {
+    exit(0);
+  }
+  else if (strcmp(args[0], "echo") == 0)
   {
     echo(args);
   }

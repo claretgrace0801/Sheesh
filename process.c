@@ -88,6 +88,7 @@ void fg(char **args)
   if (arg_len(args) < 2 || !is_num(args[1]))
   {
     printf("Error: Argument Error\n");
+    return;
   }
 
   int job_no = atoi(args[1]);
@@ -96,6 +97,7 @@ void fg(char **args)
   if (proc_ind < 0)
   {
     printf("Error: Process with job no %d not found\n", job_no);
+    return;
   }
 
   int pid = bg_procs[proc_ind].pid;
@@ -124,6 +126,7 @@ void bg(char **args)
   if (arg_len(args) < 2 || !is_num(args[1]))
   {
     printf("Error: Argument Error\n");
+    return;
   }
 
   int job_no = atoi(args[1]);
@@ -132,6 +135,7 @@ void bg(char **args)
   if (proc_ind < 0)
   {
     printf("Error: Process with job no %d not found\n", job_no);
+    return;
   }
 
   int pid = bg_procs[proc_ind].pid;
