@@ -31,6 +31,7 @@ struct Process
   pid_t pid;
   char *name;
   int status;
+  int og_bg;
 };
 
 // test
@@ -64,7 +65,7 @@ void run_job_queue(char ***queue, int no_of_jobs);
 
 void get_proc_name(pid_t pid, char **name);
 int get_proc_status(pid_t pid);
-void add_to_bg(pid_t pid, int state, char *name);
+void add_to_bg(pid_t pid, int state, char *name, int og_bg);
 void update_bg_proc();
 void jobs();
 void fg(char **args);

@@ -27,15 +27,6 @@ int main(int argc, char **argv)
       printf("\n");
       return 0;
     }
-    // // take input
-    // int read_bytes;
-    // if ((read_bytes = read(0, inp, n)) == 0)
-    // {
-    //   printf("\n");
-    //   exit(0);
-    // }
-
-    // inp[read_bytes] = '\0';
 
     update_bg_proc();
 

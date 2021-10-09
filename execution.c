@@ -70,14 +70,13 @@ void run_job(char **args, int is_bg, struct ints inputs, struct ints outputs, in
     // child
     if (is_bg)
     {
-      int current_pid = getpid();
-      printf("%d\n", current_pid);
-
       if (setpgid(0, 0) == -1)
       {
         perror("setpgid:");
         exit(1);
       }
+      int current_pid = getpid();
+      printf("%d\n", current_pid);
     }
 
     if (execvp(args[0], args) == -1)
@@ -90,15 +89,22 @@ void run_job(char **args, int is_bg, struct ints inputs, struct ints outputs, in
   {
     // parent
 
-    char *name = malloc(1);
-    arr_to_string(args, &name);
-    add_to_bg(pid, 1, name);
-    free(name);
-
     if (!is_bg)
     {
+      char *name = malloc(1);
+      arr_to_string(args, &name);
+      add_to_bg(pid, 1, name, 0);
+      free(name);
+
       int wstatus;
       waitpid(pid, &wstatus, WUNTRACED);
+    }
+    else
+    {
+      char *name = malloc(1);
+      arr_to_string(args, &name);
+      add_to_bg(pid, 1, name, 1);
+      free(name);
     }
     close(outputs.arr[ind]);
   }

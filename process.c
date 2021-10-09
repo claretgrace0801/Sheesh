@@ -14,7 +14,7 @@ int cmp_proc(const void *a, const void *b)
   }
 }
 
-void add_to_bg(pid_t pid, int status, char *name)
+void add_to_bg(pid_t pid, int status, char *name, int og_bg)
 {
   proc_no++;
 
@@ -26,6 +26,8 @@ void add_to_bg(pid_t pid, int status, char *name)
 
   proc.name = malloc(strlen(name) + 2);
   strcpy(proc.name, name);
+
+  proc.og_bg = og_bg;
 
   bg_procs[n_bg_procs] = proc;
   n_bg_procs++;
@@ -101,23 +103,26 @@ void fg(char **args)
   }
 
   int pid = bg_procs[proc_ind].pid;
-
+  int is_bg = bg_procs[proc_ind].og_bg;
   // change foreground to bg process
 
   signal(SIGTTOU, SIG_IGN);
 
   int terminal_gid = tcgetpgrp(0);
-  tcsetpgrp(0, pid);
-
-  if (kill(pid, SIGCONT) < 0)
+  if (is_bg)
   {
-    perror("FG Error");
+    tcsetpgrp(0, pid);
   }
+
+  kill(pid, SIGCONT);
 
   int wstatus;
   waitpid(pid, &wstatus, WUNTRACED);
 
-  tcsetpgrp(0, terminal_gid);
+  if (is_bg)
+  {
+    tcsetpgrp(0, terminal_gid);
+  }
   signal(SIGTTOU, SIG_DFL);
 }
 

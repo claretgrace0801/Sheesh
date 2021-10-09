@@ -61,7 +61,6 @@ void stop_process_handler()
 
 void push_to_bg_handler()
 {
-  // fprintf(stderr, "pushing to bg\n");
   int cur_pid = getpid();
   if (cur_pid != shell_pid)
   {
